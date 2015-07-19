@@ -20,7 +20,7 @@ Gem::Specification.new do |spec|
 
   spec.add_runtime_dependency 'elasticsearch-model'
   spec.add_runtime_dependency 'elasticsearch-api', '> 0.4.0'
-  spec.add_runtime_dependency 'rugged', '~> 0.21.0'
+  spec.add_runtime_dependency 'rugged', '~> 0.22.2'
   spec.add_runtime_dependency 'charlock_holmes', '~> 0.6.9'
   spec.add_runtime_dependency 'gitlab-linguist', '> 2.9.0'
   spec.add_runtime_dependency 'activemodel', '~> 4.1.0'
