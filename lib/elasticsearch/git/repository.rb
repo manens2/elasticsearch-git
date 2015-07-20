@@ -164,10 +164,13 @@ module Elasticsearch
           if status.success? && err.blank?
             #TODO use rugged walker!!!
             commit_oids = out.split("\n")
-
-            commit_oids.each_with_index do |commit, step|
-              index_commit(repository_for_indexing.lookup(commit))
-              ObjectSpace.garbage_collect if step % 100 == 0
+            begin
+              commit_oids.each_with_index do |commit, step|
+                index_commit(repository_for_indexing.lookup(commit))
+                ObjectSpace.garbage_collect if step % 100 == 0
+              end
+            rescue
+              a = 10
             end
             return commit_oids.count
           end
