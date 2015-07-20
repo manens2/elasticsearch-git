@@ -157,24 +157,23 @@ module Elasticsearch
         #
         # For search from commits use type 'commit'
         def index_commits(from_rev: nil, to_rev: repository_for_indexing.last_commit.oid)
-          from, to = parse_revs(from_rev, to_rev)
-          range = [from, to].reject(&:nil?).join('..')
-          out, err, status = Open3.capture3("git log #{range} --format=\"%H\"", chdir: repository_for_indexing.path)
-
-          if status.success? && err.blank?
-            #TODO use rugged walker!!!
-            commit_oids = out.split("\n")
-            begin
-              commit_oids.each_with_index do |commit, step|
-                index_commit(repository_for_indexing.lookup(commit))
-                ObjectSpace.garbage_collect if step % 100 == 0
-              end
-            rescue
-              a = 10
+          begin
+            from, to = parse_revs(from_rev, to_rev)
+            range = [from, to].reject(&:nil?).join('..')
+            out, err, status = Open3.capture3("git log #{range} --format=\"%H\"", chdir: repository_for_indexing.path)
+  
+            if status.success? && err.blank?
+              #TODO use rugged walker!!!
+              commit_oids = out.split("\n")
+                commit_oids.each_with_index do |commit, step|
+                  index_commit(repository_for_indexing.lookup(commit))
+                  ObjectSpace.garbage_collect if step % 100 == 0
+                end
+              return commit_oids.count
             end
-            return commit_oids.count
+          rescue
+            a = 10
           end
-
           0
         end
 
